@@ -40,6 +40,14 @@ var gameOver = false;
 var game = new Phaser.Game(config);
 
 function preload() {
+
+   // Display "Loading..." text
+    loadingText = this.add.text(config.width / 2, config.height / 2, 'Loading...', {
+        font: '32px Arial',
+        fill: '#ffffff'
+    });
+
+    loadingText.setOrigin(0.5);
     this.load.image('sky', 'sky.png');
     this.load.spritesheet('dude', 'dude.png', { frameWidth: 131, frameHeight: 138 });
     this.load.spritesheet('jumpdude', 'jumpdude.png', { frameWidth: 131, frameHeight: 138 });
