@@ -37,17 +37,11 @@ var gameOver = false;
 
 
 
+
 var game = new Phaser.Game(config);
 
 function preload() {
 
-   // Display "Loading..." text
-    loadingText = this.add.text(config.width / 2, config.height / 2, 'Loading...', {
-        font: '32px Arial',
-        fill: '#ffffff'
-    });
-
-    loadingText.setOrigin(0.5);
     this.load.image('sky', 'sky.png');
     this.load.spritesheet('dude', 'dude.png', { frameWidth: 131, frameHeight: 138 });
     this.load.spritesheet('jumpdude', 'jumpdude.png', { frameWidth: 131, frameHeight: 138 });
@@ -441,7 +435,7 @@ this.physics.add.overlap(player, [redbouncyenemy1, redbouncyenemy2, redbouncyene
     this.anims.create({
         key: 'enemyAnimation',
         frames: this.anims.generateFrameNumbers('enemy', { start: 0, end: 5 }), // Adjust end frame based on the number of frames in your sprite
-        frameRate: 10,
+        frameRate: 40,
         repeat: -1
     });
 
@@ -459,20 +453,20 @@ this.physics.add.overlap(player, [redbouncyenemy1, redbouncyenemy2, redbouncyene
        this.anims.create({
            key: 'left',
            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 14 }),  // Adjust end frame based on the number of frames in your sprite
-           frameRate: 25,
+           frameRate: 40,
            repeat: -1
        });
 
        this.anims.create({
            key: 'turn',
            frames: [{ key: 'dude', frame: 1 }],  // Adjust frame based on the number of frames in your sprite
-           frameRate: 20
+           frameRate: 40
        });
 
        this.anims.create({
            key: 'right',
            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 14 }),  // Adjust start and end frames based on the number of frames in your sprite
-           frameRate: 25,
+           frameRate: 40,
            repeat: -1
        });
 
@@ -487,7 +481,7 @@ this.physics.add.overlap(player, [redbouncyenemy1, redbouncyenemy2, redbouncyene
         this.anims.create({
              key: 'idle',
              frames: this.anims.generateFrameNumbers('idledude', { start: 0, end: 0, first: 0 }),
-             frameRate: 5,
+             frameRate: 40,
              repeat: -1  // Set repeat to -1 for continuous looping
          });
          player.anims.play('idle');
@@ -547,18 +541,39 @@ this.physics.add.overlap(player, [redbouncyenemy1, redbouncyenemy2, redbouncyene
       });
 
 function laserCollision(player, laser) {
+    if (laser.isPlayerLaser) {
+        return;
+    }
 
-if (laser.isPlayerLaser) {
-return;
-}
-   // Tint the player to purple
-      player.setTint(0xE816F3);
-playerHealth -= 20;
-  // Ensure playerHealth doesn't go below 0
+    // Store the amount of health decrease
+    const decreaseAmount = 20;
+
+    // Tint the player to purple
+    player.setTint(0xE816F3);
+    playerHealth -= decreaseAmount;
+    // Ensure playerHealth doesn't go below 0
     playerHealth = Math.max(playerHealth, 0);
 
     // Update the HP bar
     updatePlayerHPBar();
+
+    // Display the amount of decrease as text
+    const decreaseText = this.add.text(player.x, player.y, `-${decreaseAmount}`, {
+        fontSize: '24px',
+        fill: '#FF0000',
+    }).setOrigin(0.5, 0.5);
+
+    // Fade out and destroy the text after a delay
+    this.tweens.add({
+        targets: decreaseText,
+        alpha: 0,
+        y: player.y - 50, // Move the text upward
+        duration: 1000, // 1000 milliseconds (1 second)
+        onComplete: () => {
+            decreaseText.destroy();
+        },
+    });
+
     // Check if the player has an input property before disabling it
     if (player.input) {
         // Disable player input during the tint effect
@@ -568,27 +583,35 @@ playerHealth -= 20;
     // Destroy the laser
     laser.destroy();
 
-    // Set a timeout to reset the player after 500 milliseconds
-    setTimeout(function () {
+    // Set a timeout to reset the player after 1500 milliseconds
+    setTimeout(() => {
         // Reset tint and re-enable player input if it exists
         player.clearTint();
         if (player.input) {
             player.input.enabled = true;
         }
-
-
     }, 1500);
 }
+
 
 function bouncingEnemyCollision(player, enemy, tintColor) {
     // Tint the player based on the specified color
     player.setTint(tintColor);
-   playerHealth -= 0.05;
-    // Ensure playerHealth doesn't go below 0
-       playerHealth = Math.max(playerHealth, 0);
 
-       // Update the HP bar
-       updatePlayerHPBar();
+    // Decrease the player's health by 0.05
+    playerHealth -= 0.05;
+
+    // Display red text indicating the health decrease
+ displayRedTextAtCenter(player, "-0.05");
+
+
+
+    // Ensure playerHealth doesn't go below 0
+    playerHealth = Math.max(playerHealth, 0);
+
+    // Update the HP bar
+    updatePlayerHPBar();
+
     // Disable player input during the tint effect
     if (player.input) {
         player.input.enabled = false;
@@ -602,9 +625,44 @@ function bouncingEnemyCollision(player, enemy, tintColor) {
             player.input.enabled = true;
         }
     }, 1500);
-
-
 }
+// Function to display red text
+// Function to display red text at the center of the player
+function displayRedTextAtCenter(player, text) {
+if(!gameOver){
+    // Create a new div element
+    var redTextDiv = document.createElement("div");
+
+    // Set the text content
+    redTextDiv.textContent = text;
+
+    // Set the color style to red
+      // Set the styles
+        redTextDiv.style.fontSize = '24px';
+        redTextDiv.style.color = '#FF0000';
+
+    // Get the player's center position
+    var playerCenterX = player.x  +100;
+    var playerCenterY = player.y ;
+
+    // Set the position style to the center of the player
+    redTextDiv.style.position = "absolute";
+    redTextDiv.style.left = '50%';
+    redTextDiv.style.top = '30%' ;
+
+    // Append the div to the document body
+    document.body.appendChild(redTextDiv);
+
+    // Set a timeout to remove the red text after a specified time
+    setTimeout(function () {
+        redTextDiv.parentNode.removeChild(redTextDiv);
+    }, 10); // Adjust the duration as needed
+    }
+}
+
+
+
+
 
  // Check for collisions between player lasers and enemies
     this.physics.add.overlap(lasers, [bouncingEnemy1, bouncingEnemy2, bouncingEnemy3, bouncingEnemy4, bouncingEnemy5], playerLaserEnemyCollision);
@@ -707,14 +765,12 @@ function resetGame() {
     function restartGame() {
         // Reset the game state
         resetGame();
-        // Hide the game over screen
-        document.getElementById('game-over-screen').style.display = 'none';
-        // Additional reset logic if needed
+
     }
 
 function update() {
 
-
+if (!gameOver) {
  hpBar.x = player.x - 50; // Adjust the offset based on your preference
     hpBar.y = player.y - 100;
     // Update the position of the on-screen buttons with the camera
@@ -726,18 +782,18 @@ leftButton.y = this.cameras.main.worldView.bottom - 100;
 rightButton.y = this.cameras.main.worldView.bottom - 100;
 jumpButton.y = this.cameras.main.worldView.bottom - 100;
 
-if (!gameOver) {
+
     // Player movement code
     if (cursors.left.isDown) {
         // Left movement
-        player.setVelocityX(-300);
+        player.setVelocityX(-500);
         player.flipX = true;
         if (player.body.onFloor()) {
             player.anims.play('left', true);
         }
     } else if (cursors.right.isDown) {
         // Right movement
-        player.setVelocityX(300);
+        player.setVelocityX(500);
         player.flipX = false;
         if (player.body.onFloor()) {
             player.anims.play('right', true);
@@ -762,7 +818,7 @@ if (!gameOver) {
 
     }
 
-}
+
 
 
      if (player.body.velocity.y > 0) {
@@ -784,7 +840,7 @@ if (!gameOver) {
     if (playerHealth <= 0) {
 gameOverScreen();
     }
-
+}
 }
 
 
