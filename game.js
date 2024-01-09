@@ -601,8 +601,6 @@ function bouncingEnemyCollision(player, enemy, tintColor) {
     // Decrease the player's health by 0.05
     playerHealth -= 0.05;
 
-    // Display red text indicating the health decrease
- displayRedTextAtCenter(player, "-0.05");
 
 
 
@@ -625,39 +623,6 @@ function bouncingEnemyCollision(player, enemy, tintColor) {
             player.input.enabled = true;
         }
     }, 1500);
-}
-// Function to display red text
-// Function to display red text at the center of the player
-function displayRedTextAtCenter(player, text) {
-if(!gameOver){
-    // Create a new div element
-    var redTextDiv = document.createElement("div");
-
-    // Set the text content
-    redTextDiv.textContent = text;
-
-    // Set the color style to red
-      // Set the styles
-        redTextDiv.style.fontSize = '24px';
-        redTextDiv.style.color = '#FF0000';
-
-    // Get the player's center position
-    var playerCenterX = player.x  +100;
-    var playerCenterY = player.y ;
-
-    // Set the position style to the center of the player
-    redTextDiv.style.position = "absolute";
-    redTextDiv.style.left = '50%';
-    redTextDiv.style.top = '30%' ;
-
-    // Append the div to the document body
-    document.body.appendChild(redTextDiv);
-
-    // Set a timeout to remove the red text after a specified time
-    setTimeout(function () {
-        redTextDiv.parentNode.removeChild(redTextDiv);
-    }, 10); // Adjust the duration as needed
-    }
 }
 
 
