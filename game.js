@@ -674,10 +674,18 @@ function areAllEnemiesDefeated() {
                     // All enemies are defeated, create a new enemy
 
                     console.log('All enemies are defeated! ');
+                      winScreen();
                 }
             }
         }
     }
+}
+
+function winScreen() {
+    // Display the win screen
+    document.getElementById('win-screen').style.display = 'flex';
+    // Additional win screen logic if needed
+    gameOver = true; // Update game over status
 }
 
     hpBar = this.add.graphics();
