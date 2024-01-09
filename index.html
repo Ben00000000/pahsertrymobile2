@@ -21,7 +21,8 @@
             position: absolute;
             width: 100%; /* Adjust the width as needed */
             height: 100%; /* Adjust the height as needed */
-            background-color: rgba(0, 0, 0, 0.7);
+              background: url('sky.png') no-repeat center center fixed;
+            background-size: cover;
             display: none;
             flex-direction: column;
             justify-content: center;
@@ -33,16 +34,21 @@
         }
 
         #game-over-screen p {
+ color:black;
+ font-size: 60px;
             transform: rotateX(-20deg);
-            margin-bottom: 20px;
+            top:20%
+            left50%
             font-size: 30px;
         }
 
         #game-over-screen button {
+
             background-color: #4CAF50;
+            top:20%
+            left50%
             color: white;
-            padding: 10px 20px;
-            font-size: 18px;
+            font-size: 30px;
             border: none;
             cursor: pointer;
             border-radius: 5px;
